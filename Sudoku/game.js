@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+	// Zmienne z html
 	const gridContent = document.getElementById('gridContent');
 	const numberGrid = document.getElementById('numberGrid');
 	const time = document.getElementById('time');
@@ -6,34 +7,42 @@ document.addEventListener('DOMContentLoaded', () => {
 	const startButton = document.getElementById('startTime');
 	const checkButton = document.getElementById('checkButton');
 	const playAgainButton = document.getElementById('playAgainButton');
+	// Wymiary planszy
 	const width = 9;
 	const height = 9;
-	// Array which contains fields of the board
+	// Tablica zawierająca pola z planszy sudoku
 	var fields = Array(width*height);
-	// Array which contains fields of the right panel
-	var rightPanelNumbers = Array(9);
-	// Array which contains data about sudoku board
-	var sudoku = Array(81);
-	// Array of filled fields of sudoku
+	// Tablica zawierająca pola z prawego panelu
+	var rightPanelNumbers = Array(width);
+	// Tablica zawierająca cyfry na planszy sudoku
+	var sudoku = Array(width*height);
+	// Tablica zawierająca informacje o aktualnie wypełnionych polach na planszy
 	var filledSudoku = Array(81);
-	// Array of self-added indexes
+	// Tablica zawierająca informacje o indeksach wybieranych przez użytkownika
 	var addedIndexes = [];
-	// Array of empty fields at the baginning of the game
+	// Tablica zawierająca informacje o indeksach w których znajdują się błędy
 	var errorIndexes = [];
-	// Selected field holder
+	// Zmienna przechowująca indeks aktualnie wybranego pola z planszy sudoku
 	var idxHolder = -1;
+	// Zmienna służąca do przechowywania informacji o timeout
 	var timeoutHolder;
+	// Flaga do sprawdzania czy plansza jest uzupełniona (pomaga obsługiwać widoczność przycisków)
 	var boardCompleted = false;
+	// Flaga przechowująca informacje czy mierzony jest czas
 	var measureTime = false;
+	// Zmienna trzymająca ilość sekund od rozpoczęcia gry
 	var clock = 0;
+	// Zmienna pomocnicza
 	var temp = -1;
 	
+	// Przypisanie funkcji do guziczków i inicjalizacja czasu
 	time.innerHTML = 'Czas: 00:00';
 	stopButton.onclick = stopTimer;
 	startButton.onclick = startTimer;
 	checkButton.onclick = checkFields;
 	playAgainButton.onclick = refresh;
 	
+	// Funkcja przywracająca stan planszy sprzed zatrzymania czasu
 	function initialize() {
 		for (let i = 0; i < width*height; i++) {
 				if (filledSudoku[i] == -1) {
@@ -50,7 +59,9 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	}
 	
+	// Funkcja obsługująca przycisk 'Zagraj ponownie'
 	function refresh() {
+		boardCompleted = false;
 		measureTime = false;
 		clock = 0;
 		addedIndexes = [];
@@ -66,11 +77,13 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 		time.innerHTML = 'Czas: 00:00';
 		startButton.onclick = startTimer;
+		checkButton.style.visibility = 'hidden';
 		clearTimeout(timeoutHolder);
 		createBoard();
 		generateBoard();
 	}
 	
+	// Funkcja sprawdzająca czy nie powtarza się cyfra w rzędzie
 	function checkRows() {
 		var isCorrect = true;
 		for (let idx = 0; idx < width*height; idx += 9) {
@@ -87,6 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		return isCorrect;
 	}
 	
+	// Funkcja sprawdzająca czy nie powtarza się cyfra w kolumnie
 	function checkColumns() {
 		var isCorrect = true;
 		for (let idx = 0; idx < width; idx++) {
@@ -103,6 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		return isCorrect;
 	}
 	
+	// Funkcja sprawdzająca czy nie powtarza się cyfra w dziewięcioelementowym kwadracie
 	function checkSquares() {
 		var isCorrect = true;
 		var firstSquareIndexes = [0, 3, 6, 27, 30, 33, 54, 57, 60];
@@ -122,9 +137,9 @@ document.addEventListener('DOMContentLoaded', () => {
 		return isCorrect;
 	}
 	
+	// Funkcja sprawdzająca czy to koniec gry. Jeżeli tak to niespodzianka, jeżeli nie to podkreśla pierwszy napotkany błąd
 	function checkFields() {
 		if (checkRows() && checkColumns() && checkSquares()) {
-			startButton.style.visibility = 'hidden';
 			stopTimer();
 			clearTimeout(timeoutHolder);
 			for (let i = 0; i < width*height; i++) {
@@ -139,6 +154,8 @@ document.addEventListener('DOMContentLoaded', () => {
 			specifyAttributeForSelectedField(fields[42], 42, 'background-image: linear-gradient(#099e39, green 0%); color: #099e39;');
 			specifyAttributeForSelectedField(fields[34], 34, 'background-image: linear-gradient(#099e39, green 0%); color: #099e39;');
 			specifyAttributeForSelectedField(fields[26], 26, 'background-image: linear-gradient(#099e39, green 0%); color: #099e39;');
+			startButton.style.visibility = 'hidden';
+			
 			// Tutaj należy wysłać dane do bazy
 			
 		} else {
@@ -151,6 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	}
 	
+	// Funkcja zaznaczająca pola od których zależy aktualnie wybrane przez użytkownika pole (ciemniejsza teksturka po kliknięciu w pole sudoku)
 	function fieldEvent(e) {
 			// Listener dla pola na planszy sudoku
 			for (let j = 0; j < 81; j++) {
@@ -189,6 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			idxHolder = i;	
 	}		
 	
+	// Funkcja z dedykacją dla Natalii :) Zakomentuj lub usuń jak skończysz testy bazy
 	function print() {
 		var result = '';
 		for (let y = 0; y < width; y++) {
@@ -200,8 +219,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		console.log(result);
 	}
 	
+	// Funkcja umożliwiająca modyfikację kratki na planszy sudoku
 	function specifyAttributeForSelectedField(field, variable, descr) {
-		//console.log(variable);
 		// Trzecie pola dziewięcioelementowych kwadratów
 		if ((variable+1) % 3 == 0 && (variable+1) % 9 != 0) {
 			// Pierwsze rzędy dziewięcioelementowych kwadratów
@@ -238,6 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	}
 	
+	// Funkcja ułatwiająca modyfikację pojedyńczej kratki w prawym panelu
 	function specifyAttributeForSelectedNumber(numberField, temp, descr) {
 		// Pierwsze i drugie pole w każdym rzędzie
 		if (temp % 3 == 2) {
@@ -259,6 +279,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	}
 	
+	// Funkcja tworząca widok planszy gry sudoku
 	function createBoard() {
 		for (let y = 0; y < height; y++) {
 			for (let x = 0; x < width; x++) {
@@ -273,6 +294,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 	createBoard();
 	
+	// Funkcja przygotowująca (modelująca) prawy panel z cyframi
 	function prepareNumberGrid() {
 		for (let y = 0; y < 3; y++) {
 			for (let x = 0; x < 3; x++) {
@@ -309,7 +331,6 @@ document.addEventListener('DOMContentLoaded', () => {
 					}
 					var isNotEnd = filledSudoku.includes(-1);
 					if (!isNotEnd) {
-						//console.log("!");
 						checkButton.style.visibility = 'visible';
 						boardCompleted = true;
 					}
@@ -321,12 +342,14 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 	prepareNumberGrid();
 	
+	// Funkcja do zwracania losowej liczby całkowitej
 	function getRandomInt(min, max) {
 		min = Math.ceil(min);
 		max = Math.floor(max);
 		return Math.floor(Math.random() * (max-min)) + min;
 	}		
 	
+	// Funkcja zamieniająca miejscami wszystkie występienia wylosowanej pary liczb
 	function changeTwoNumbers() {
 		let firstNum = getRandomInt(1, 10);
 		let secondNum = getRandomInt(1, 10);
@@ -344,13 +367,14 @@ document.addEventListener('DOMContentLoaded', () => {
 		}			
 	}
 	
+	// Funkcja zamieniająca pojedyńcze rzędy w dziewięcioelementowych kwadratach
 	function changeRows() {
-		let firstNum = getRandomInt(1, 3);
-		let secondNum = getRandomInt(1, 3);
-		let thirdNum = getRandomInt(1, 3);
+		let firstNum = getRandomInt(1, 4);
+		let secondNum = getRandomInt(1, 4);
+		let thirdNum = getRandomInt(1, 4);
 		
 		while (secondNum == thirdNum) {
-			thirdNum = getRandomInt(1, 3);
+			thirdNum = getRandomInt(1, 4);
 		}
 		
 		let firstIdx = (firstNum - 1) * 27 + (secondNum - 1) * 9;
@@ -362,13 +386,33 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	}
 	
+	// Funkcja zamieniająca rzędzy dziewięcioelementowych kwadratów
+	function changeBiggerRows() {
+		let firstNum = getRandomInt(1, 4);
+		let secondNum = getRandomInt(1, 4);
+		
+		while (firstNum == secondNum) {
+			secondNum = getRandomInt(1, 4);
+		}
+		
+		let firstIdx = (firstNum - 1) * 27;
+		let secondIdx = (secondNum - 1) * 27;
+		
+		for (let idx = 0; idx < width*3; idx++) {
+			temp = sudoku[firstIdx+idx];
+			sudoku[firstIdx+idx] = sudoku[secondIdx+idx];
+			sudoku[secondIdx+idx] = temp;
+		}
+	}
+	
+	// Funkcja zamieniająca pojedyńcze kolumny w obrębie jednego dziewięcioelementowego kwadratu
 	function changeColumns() {
-		let firstNum = getRandomInt(1, 3);
-		let secondNum = getRandomInt(1, 3);
-		let thirdNum = getRandomInt(1, 3);
+		let firstNum = getRandomInt(1, 4);
+		let secondNum = getRandomInt(1, 4);
+		let thirdNum = getRandomInt(1, 4);
 		
 		while (secondNum == thirdNum) {
-			thirdNum = getRandomInt(1, 3);
+			thirdNum = getRandomInt(1, 4);
 		}
 		
 		let firstIdx = (firstNum - 1) * 3 + secondNum - 1;
@@ -381,8 +425,31 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	}
 	
+	// Funkcja zamieniająca ze sobą kolumny dziewięcioelementowych kwadratów
+	function changeBiggerColumns() {
+		let firstNum = getRandomInt(1, 4);
+		let secondNum = getRandomInt(1, 4);
+		
+		while (firstNum == secondNum) {
+			secondNum = getRandomInt(1, 4);
+		}
+		
+		let firstIdx = (firstNum - 1) * 3;
+		let secondIdx = (secondNum - 1) * 3;
+			
+		for (let i = 0; i < 3; i++) {
+			for (let idx = 0; idx < width*height; idx+=9) {
+				temp = sudoku[firstIdx+idx+i];
+				sudoku[firstIdx+idx+i] = sudoku[secondIdx+idx+i];
+				sudoku[secondIdx+idx+i] = temp;
+			}
+		}
+	}
+	
+	// Funkcja tworząca planszę sudoku
 	function generateBoard() {
 		let iter = 0;
+		// Utworzenie wyjściowej planszy sudoku, która zostanie poddana modyfikacją
 		for (let i = 0; i < 9; i++) {
 			sudoku[i] = i+1;
 			if (i+12 < 18) {
@@ -427,34 +494,41 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 		}
 		
+		// Modyfikacje planszy sudoku
 		while (iter < 50) {
 			temp = getRandomInt(1, 6);
 			if (temp == 1) {
 				changeColumns();
-				changeTwoNumbers();
 			} else if (temp == 2) {
 				changeRows();
-				changeColumns();
+			} else if (temp == 3) {
+				changeBiggerRows();
+			} else if (temp == 4) {
+				changeBiggerColumns();
 			} else {
 				changeTwoNumbers();
-				changeColumns();
-				changeRows();
 			}
 			iter++;
 		}
-		iter = 0;
+		
+		// Inicjalizacja tablicy filledSudoku
 		for (let i = 0; i < width*height; i++) {
-			if (Math.random() < 0.5 && iter < 40) {
-				fields[i].innerHTML = sudoku[i];
-				filledSudoku[i] = sudoku[i];
+			filledSudoku[i] = -1;
+		}
+		
+		// Odsłonięcie połowy losowo wybranych pól
+		iter = 0;
+		while (iter < 40) {
+			temp = getRandomInt(1, 82);
+			if (filledSudoku[temp] == -1) {
+				fields[temp].innerHTML = sudoku[temp];
+				filledSudoku[temp] = sudoku[temp];
 				iter++;
-			} else {
-				filledSudoku[i] = -1;
-				specifyAttributeForSelectedField(fields[i], i, '');
-				fields[i].addEventListener('click', fieldEvent);
 			}
 		}
+		// Czas rusza zaraz po uruchomieniu gry
 		startTimer();
+		// Wypisanie wartości
 		print();
 	}
 	generateBoard();
@@ -463,15 +537,18 @@ document.addEventListener('DOMContentLoaded', () => {
 	function startTimer() {
 		measureTime = true;
 		refreshTimer();
+		// Zarządzanie widocznością przycisków
 		startButton.style.visibility = 'hidden';
 		stopButton.style.visibility = 'visible';
 		if (boardCompleted) checkButton.style.visibility = 'visible';
+		// Przywrócenie stanu planszy sprzed zatrzymania czasu
 		initialize();
 	}
 	
 	// Działanie czasomierza
 	function refreshTimer() {
 		if (measureTime) {
+			// Modyfikacja napisu czasowego
 			time.innerHTML = '';
 			clock++;
 			if (clock < 60) {
@@ -490,6 +567,7 @@ document.addEventListener('DOMContentLoaded', () => {
 					time.innerHTML = 'Czas: ' + minutes + ':' + seconds;
 				}
 			}
+			// Przypisanie timeout'a do zmiennej globalnej pozwala go zutylizować przed kolejną rozgrywką
 			timeoutHolder = setTimeout(refreshTimer, 1000);
 		}
 	}
@@ -497,12 +575,16 @@ document.addEventListener('DOMContentLoaded', () => {
 	// Wyłączenie czasomierza
 	function stopTimer() {
 		measureTime = false;
+		// "Zakrycie" wszystkich pól, żeby gracz nie mógł planować kolejnych ruchów
 		for (let i = 0; i < width*height; i++) {
 			fields[i].innerHTML = '';
+			// Usunięcie event listenera
 			fields[i].removeEventListener('click', fieldEvent, false);
 			specifyAttributeForSelectedField(fields[i], i, '');
 		}
+		// Wybór liczby z prawego panelu nie spowoduje modyfikacji wcześniej zaznaczonego pola
 		idxHolder = -1;
+		// Zarządzanie widocznością przycisków
 		stopButton.style.visibility = 'hidden';
 		checkButton.style.visibility = 'hidden';
 		startButton.style.visibility = 'visible';

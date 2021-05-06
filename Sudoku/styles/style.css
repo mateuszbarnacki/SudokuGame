@@ -1,3 +1,4 @@
+/* Tło mojej tymczasowej stronki */
 body {
 	margin-left: auto;
 	margin-right: auto;
@@ -7,8 +8,9 @@ body {
 	color: white;
 }
 
+/* Plansza na której umieszczone są wszystkie obiekty*/
 #board {
-	background-color: #777;
+	background-color: transparent;
 	margin-left: auto;
 	margin-right: auto;
 	border-radius: 45px;
@@ -18,6 +20,7 @@ body {
 }
 
 /* Background pattern from Toptal Subtle Patterns */
+/* Panel na którym znajduje się plansza sudoku */
 #grid {
 	overflow: auto;
 	background-image: url("img/ricepaper_v3.png");
@@ -29,6 +32,7 @@ body {
 	height: 516px;
 }
 
+/* Ścisły panel gry (kratki) */
 #gridContent {
 	position: relative;
 	text-alignment: center;
@@ -40,6 +44,7 @@ body {
 	height: 472px;
 }
 
+/* Pojedyńcza kratka sudoku */
 #gridContent > div {
 	background-image: url("img/ricepaper_v3.png");
 	float: left;
@@ -52,6 +57,7 @@ body {
 	justify-content: center;
 }
 
+/* Prawy panel na którym znajdują się czasomierz, guziki i cyfry */
 #rightPanel {
 	margin-left: 50px;
 	float: left;
@@ -59,12 +65,14 @@ body {
 	height: 516px;
 }
 
+/* Czasomierz */
 #time {
 	margin-top: 40px;
 	font-size: 50px;
 	font-weight: bold;
 }
 
+/* Panel na którym znajdują się cyfry */
 #numberPicker {
 	overflow: auto;
 	background-image: url("img/ricepaper_v3.png");
@@ -73,6 +81,7 @@ body {
 	height: 250px;
 }
 
+/* Siatka cyfr */
 #numberGrid {
 	position: relative;
 	background-color: #000;
@@ -83,6 +92,7 @@ body {
 	margin-top: 10px;
 }
 
+/* Element siatki cyfr */
 #numberGrid > div {
 	background-image: url("img/ricepaper_v3.png");
 	color: #000;
@@ -96,16 +106,47 @@ body {
 	height: 70px;
 }
 
+/* Przycisk do wznawiania pomiaru czasu */
 #startTime {
 	margin-top: 10px;
 	visibility: hidden;
+	background-color: #eee;
+	border: none;
+	border-radius: 100px;
+	color: #77b103;
+	text-align: center;
+	font-size: 16px;
 }
 
+/* Przycisk do zatrzymania pomiaru czasu */
 #stopTime {
 	margin-top: 10px;
+	background-color: #eee;
+	border: none;
+	border-radius: 100px;
+	color: #77b103;
+	text-align: center;
+	font-size: 16px;
 }
 
+/* Przycisk do sprawdzania czy to koniec gry */
 #checkButton {
 	margin-top: 10px;
 	visibility: hidden;
+	background-color: #eee;
+	border: none;
+	border-radius: 100px;
+	color: #77b103;
+	text-align: center;
+	font-size: 16px;
+}
+
+/* Przycisk ponownej gry */
+#playAgainButton {
+	background-color: #eee;
+	border: none;
+	border-radius: 100px;
+	color: #77b103;
+	text-align: center;
+	font-size: 16px;
 }
